@@ -181,7 +181,10 @@ QString LanguageModel::locale(int index) const
 
 void LanguageModel::setSystemLocale(const QString &localeCode, LocaleUpdateMode updateMode)
 {
-    int ret = QProcess::execute(QLatin1String("/usr/libexec/setlocale"), QStringList(localeCode));
+    int ret = QProcess::execute(
+        QFile::exists("/usr/libexec/setlocale") ? QLatin1String("/usr/libexec/setlocale") : QLatin1String("/usr/lib/nemo-qml-plugin-systemsettings-git/setlocale"),
+        QStringList(localeCode)
+    );
     if (ret != 0) {
         qWarning() << "Setting user locale failed!";
         return;
