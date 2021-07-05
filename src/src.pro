@@ -7,7 +7,7 @@ QT -= gui
 
 CONFIG += c++11 hide_symbols link_pkgconfig
 PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto libsailfishkeyprovider connman-qt5 glib-2.0
-PKGCONFIG += ssu-sysinfo nemodbus libsystemd sailfishusermanager sailfishaccesscontrol
+PKGCONFIG += ssu-sysinfo nemodbus libsystemd
 
 packagesExist(packagekitqt5) {
     message("Developer mode plugin enabled")
@@ -15,6 +15,14 @@ packagesExist(packagekitqt5) {
     DEFINES += DEVELOPER_MODE_ENABLED
 } else {
     warning("Developer mode plugin disabled")
+}
+
+packagesExist(sailfishusermanager) {
+    message("Users managmend plugin enabled")
+    PKGCONFIG += sailfishusermanager sailfishaccesscontrol
+    DEFINES += USER_MODE_ENABLED
+} else {
+    warning("User managment plugin disabled")
 }
 
 system($$[QT_INSTALL_BINS]/qdbusxml2cpp -p mceiface.h:mceiface.cpp mce.xml)
@@ -45,8 +53,6 @@ SOURCES += \
     udisks2blockdevices.cpp \
     udisks2job.cpp \
     udisks2monitor.cpp \
-    userinfo.cpp \
-    usermodel.cpp \
     permissionsmodel.cpp
 
 PUBLIC_HEADERS = \
@@ -70,8 +76,6 @@ PUBLIC_HEADERS = \
     deviceinfo.h \
     locationsettings.h \
     timezoneinfo.h \
-    userinfo.h \
-    usermodel.h \
     permissionsmodel.h
 
 HEADERS += \
@@ -88,12 +92,19 @@ HEADERS += \
     partitionmanager_p.h \
     udisks2blockdevices_p.h \
     udisks2job_p.h \
-    udisks2monitor_p.h \
-    userinfo_p.h
+    udisks2monitor_p.h
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
     SOURCES += developermodesettings.cpp
     PUBLIC_HEADERS += developermodesettings.h
+}
+
+CONFIG(USER_MODE_ENABLED) {
+    SOURCES +=  userinfo.cpp \
+                usermodel.cpp
+    PUBLIC_HEADERS += userinfo.h \
+                      usermodel.h
+    HEADERS += userinfo_p.h
 }
 
 DEFINES += \

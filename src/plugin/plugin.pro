@@ -13,6 +13,11 @@ packagesExist(packagekitqt5) {
     DEFINES += DEVELOPER_MODE_ENABLED
 }
 
+packagesExist(sailfishusermanager) {
+    PKGCONFIG += sailfishusermanager sailfishaccesscontrol
+    DEFINES += USER_MODE_ENABLED
+}
+
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
 INSTALLS += target
 
