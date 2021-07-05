@@ -55,8 +55,10 @@
 #include "locationsettings.h"
 #include "deviceinfo.h"
 #include "nfcsettings.h"
+#ifdef USER_MODE_ENABLED
 #include "userinfo.h"
 #include "usermodel.h"
+#endif
 #include "permissionsmodel.h"
 
 class AppTranslator: public QTranslator
@@ -119,8 +121,10 @@ public:
         qmlRegisterType<LocationSettings>(uri, 1, 0, "LocationSettings");
         qmlRegisterType<DeviceInfo>(uri, 1, 0, "DeviceInfo");
         qmlRegisterType<NfcSettings>(uri, 1, 0, "NfcSettings");
+#ifdef USER_MODE_ENABLED
         qmlRegisterType<UserInfo>(uri, 1, 0, "UserInfo");
         qmlRegisterType<UserModel>(uri, 1, 0, "UserModel");
+#endif
         qmlRegisterType<PermissionsModel>(uri, 1, 0, "PermissionsModel");
     }
 };
