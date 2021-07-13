@@ -172,9 +172,9 @@ AboutSettings::AboutSettings(QObject *parent)
     , d_ptr(new AboutSettingsPrivate(this))
 {
     Q_D(AboutSettings);
-    QSettings settings(QStringLiteral("/mnt/vendor_data/vendor-data.ini"), QSettings::IniFormat);
-    d->vendorName = settings.value(QStringLiteral("Name")).toString();
-    d->vendorVersion = settings.value(QStringLiteral("Version")).toString();
+    QSettings settings(QStringLiteral("/etc/os-release"), QSettings::IniFormat);
+    d->vendorName = settings.value(QStringLiteral("NAME")).toString();
+    d->vendorVersion = settings.value(QStringLiteral("BUILD_ID")).toString();
 
     refreshStorageModels();
 

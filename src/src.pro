@@ -7,7 +7,7 @@ QT -= gui
 
 CONFIG += c++11 hide_symbols link_pkgconfig
 PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto libsailfishkeyprovider connman-qt5 glib-2.0
-PKGCONFIG += ssu-sysinfo nemodbus libsystemd
+PKGCONFIG += nemodbus libsystemd
 
 packagesExist(packagekitqt5) {
     message("Developer mode plugin enabled")
@@ -23,6 +23,11 @@ packagesExist(sailfishusermanager) {
     DEFINES += USER_MODE_ENABLED
 } else {
     warning("User managment plugin disabled")
+}
+
+packagesExist(ssu-sysinfo) {
+    PKGCONFIG += ssu-sysinfo
+    DEFINES += HAS_SSUSYSINFO
 }
 
 system($$[QT_INSTALL_BINS]/qdbusxml2cpp -p mceiface.h:mceiface.cpp mce.xml)
