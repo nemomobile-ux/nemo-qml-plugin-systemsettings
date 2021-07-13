@@ -32,8 +32,13 @@
 #include "deviceinfo.h"
 
 #include <QSet>
+#include <QFile>
+#include <QDebug>
+#include <QSettings>
 
+#ifdef HAS_SSUSYSINFO
 #include <ssusysinfo.h>
+#endif
 
 class DeviceInfoPrivate
 {
@@ -52,6 +57,7 @@ public:
 
 DeviceInfoPrivate::DeviceInfoPrivate()
 {
+#ifdef HAS_SSUSYSINFO
     ssusysinfo_t *si = ssusysinfo_create();
 
     hw_feature_t *features = ssusysinfo_get_hw_features(si);
@@ -78,6 +84,23 @@ DeviceInfoPrivate::DeviceInfoPrivate()
     m_prettyName = ssusysinfo_device_pretty_name(si);
 
     ssusysinfo_delete(si);
+#else
+    if(QFile::exists("/etc/hw-release")) {
+        QSettings* devSettings = new QSettings("/etc/device.ini", QSettings::IniFormat);
+        m_model = devSettings->value("MODEL", "Unknown model").toString();
+        m_baseModel = devSettings->value("BASE_MODEL", "Unknown base model").toString();
+        m_designation = devSettings->value("DESIGNATION", "Unknown designation").toString();
+        m_manufacturer = devSettings->value("MANUFACTURER", "Unknown anufacturer").toString();
+        m_prettyName = devSettings->value("PRETTY_NAME", "Unknown pretty name").toString();
+    } else {
+        qWarning() << "SSU and /etc/hw-release file not found";
+        m_model = "Unknown";
+        m_baseModel = "Unknown";
+        m_designation = "Unknown";
+        m_manufacturer = "Unknown";
+        m_prettyName = "Unknown";
+    }
+#endif
 }
 
 DeviceInfoPrivate::~DeviceInfoPrivate()
