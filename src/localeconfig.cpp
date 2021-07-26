@@ -31,6 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
  */
 
+#include <QStandardPaths>
 #include <QDebug>
 
 #include "localeconfig.h"
@@ -41,7 +42,7 @@
 QString localeConfigPath()
 {
     // User-wide locale config
-    return QString("/home/.system/var/lib/environment/%1/locale.conf").arg(getuid());
+    return QString("%1/.config/locale.conf").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 }
 
 QString systemLocaleConfigPath()
