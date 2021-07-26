@@ -78,7 +78,7 @@ static bool writeLocale(QString &configPath, QString &locale)
 {
     QFile localeConfig(configPath);
     if (!ensureDirectory(configPath)) {
-        qWarning() << "Unable to create directory for locale configuration file";
+        qWarning() << "Unable to create directory for locale configuration file" << configPath;
         return false;
     }
 
