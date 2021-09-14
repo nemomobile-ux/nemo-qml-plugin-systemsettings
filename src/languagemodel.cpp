@@ -40,7 +40,7 @@
 #include <QProcess>
 
 namespace {
-const char * const LanguageSupportDirectory = "/usr/share/jolla-supported-languages";
+const char * const LanguageSupportDirectory = "/usr/share/supported-languages";
 
 bool nameLessThan(const Language &lang1, const Language &lang2)
 {
@@ -171,10 +171,23 @@ QString LanguageModel::locale(int index) const
 
 void LanguageModel::setSystemLocale(const QString &localeCode, LocaleUpdateMode updateMode)
 {
-    int ret = QProcess::execute(
-        QFile::exists("/usr/libexec/setlocale") ? QLatin1String("/usr/libexec/setlocale") : QLatin1String("/usr/lib/nemo-qml-plugin-systemsettings-git/setlocale"),
-        QStringList(localeCode)
-    );
+    QLatin1String exec;
+//FOR SFOS
+    if(QFile::exists("/usr/libexec/setlocale")) {
+        exec = QLatin1String("/usr/libexec/setlocale");
+    }
+//FOR NEMOMOBILE
+    if(QFile::exists("/usr/lib/nemo-qml-plugin-systemsettings-git/setlocale")) {
+        exec = QLatin1String("/usr/lib/nemo-qml-plugin-systemsettings-git/setlocale");
+    }
+
+    if(exec.isEmpty()) {
+        qWarning() << "Set local executable not found";
+        return;
+    }
+
+    int ret = QProcess::execute(exec, QStringList(localeCode));
+
     if (ret != 0) {
         qWarning() << "Setting user locale failed!";
         return;
