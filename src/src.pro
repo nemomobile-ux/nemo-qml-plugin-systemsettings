@@ -6,7 +6,7 @@ QT += qml dbus systeminfo xmlpatterns
 QT -= gui
 
 CONFIG += c++11 hide_symbols link_pkgconfig
-PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto libsailfishkeyprovider connman-qt5 glib-2.0
+PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto connman-qt5 glib-2.0
 PKGCONFIG += nemodbus libsystemd
 
 packagesExist(packagekitqt5) {
@@ -23,6 +23,12 @@ packagesExist(sailfishusermanager) {
     DEFINES += USER_MODE_ENABLED
 } else {
     warning("User managment plugin disabled")
+}
+
+packagesExist(libsailfishkeyprovider) {
+    message("Sailfish key provider enabled")
+    PKGCONFIG += libsailfishkeyprovider
+    DEFINES += SAILFISHKEYPROVIDER_ENABLED
 }
 
 packagesExist(ssu-sysinfo) {

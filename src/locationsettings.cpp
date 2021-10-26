@@ -37,9 +37,11 @@
 #include <QTimer>
 #include <QDebug>
 
+#ifdef SAILFISHKEYPROVIDER_ENABLED
 #include <sailfishkeyprovider.h>
 #include <sailfishkeyprovider_iniparser.h>
 #include <sailfishkeyprovider_processmutex.h>
+#endif
 
 #include <networkmanager.h>
 #include <networktechnology.h>
@@ -91,8 +93,12 @@ IniFile::IniFile(const QString &fileName, const QString &compatibilityFileName)
     , m_modified(false)
     , m_valid(false)
 {
+#ifdef SAILFISHKEYPROVIDER_ENABLED
     m_processMutex.reset(new Sailfish::KeyProvider::ProcessMutex(qPrintable(m_fileName)));
+#else
+    m_processMutex = new QMutex();
     m_processMutex->lock();
+#endif
     m_keyFile = g_key_file_new();
     if (!m_keyFile) {
         qWarning() << "Unable to allocate key file:" << m_fileName;
@@ -140,6 +146,7 @@ IniFile::~IniFile()
     if (m_keyFile) {
         g_key_file_free(m_keyFile);
     }
+
     m_processMutex->unlock();
 }
 

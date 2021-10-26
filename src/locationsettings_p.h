@@ -41,7 +41,11 @@
 #include <QStringList>
 #include <QHash>
 
+#ifdef SAILFISHKEYPROVIDER_ENABLED
 #include <sailfishkeyprovider_processmutex.h>
+#else
+#include <QMutex>
+#endif
 
 #include <glib.h>
 
@@ -98,7 +102,11 @@ public:
     void writeString(const QString &section, const QString &key, const QString &value);
 
 private:
+#ifdef SAILFISHKEYPROVIDER_ENABLED
     mutable QScopedPointer<Sailfish::KeyProvider::ProcessMutex> m_processMutex;
+#else
+    QMutex *m_processMutex;
+#endif
     QString m_fileName;
     QString m_compatibilityFileName;
     GKeyFile *m_keyFile;

@@ -6,7 +6,7 @@ CONFIG += qt plugin c++11 hide_symbols link_pkgconfig
 QT += qml dbus network
 QT -= gui
 
-PKGCONFIG += profile usb-moded-qt5 libsailfishkeyprovider connman-qt5
+PKGCONFIG += profile usb-moded-qt5 connman-qt5
 
 packagesExist(packagekitqt5) {
     PKGCONFIG += packagekitqt5
@@ -16,6 +16,11 @@ packagesExist(packagekitqt5) {
 packagesExist(sailfishusermanager) {
     PKGCONFIG += sailfishusermanager sailfishaccesscontrol
     DEFINES += USER_MODE_ENABLED
+}
+
+packagesExist(libsailfishkeyprovider) {
+    PKGCONFIG += libsailfishkeyprovider
+    DEFINES += SAILFISHKEYPROVIDER_ENABLED
 }
 
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
