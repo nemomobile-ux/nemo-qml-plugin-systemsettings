@@ -9,7 +9,8 @@ CONFIG += c++11 hide_symbols link_pkgconfig
 PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto connman-qt5 glib-2.0
 PKGCONFIG += nemodbus libsystemd
 
-packagesExist(packagekitqt5) {
+
+CONFIG(DEVELOPER_MODE_ENABLED) {
     message("Developer mode plugin enabled")
     PKGCONFIG += packagekitqt5
     DEFINES += DEVELOPER_MODE_ENABLED
@@ -17,7 +18,7 @@ packagesExist(packagekitqt5) {
     warning("Developer mode plugin disabled")
 }
 
-packagesExist(sailfishusermanager) {
+CONFIG(SFOS_USER_MODE) {
     message("Users managmend plugin enabled")
     PKGCONFIG += sailfishusermanager sailfishaccesscontrol
     DEFINES += USER_MODE_ENABLED
@@ -25,13 +26,13 @@ packagesExist(sailfishusermanager) {
     warning("User managment plugin disabled")
 }
 
-packagesExist(libsailfishkeyprovider) {
+CONFIG(SAILFISHKEYPROVIDER_ENABLED) {
     message("Sailfish key provider enabled")
     PKGCONFIG += libsailfishkeyprovider
     DEFINES += SAILFISHKEYPROVIDER_ENABLED
 }
 
-packagesExist(ssu-sysinfo) {
+CONFIG(USE_SSU) {
     PKGCONFIG += ssu-sysinfo
     DEFINES += HAS_SSUSYSINFO
 }
