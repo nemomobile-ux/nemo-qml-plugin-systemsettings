@@ -8,17 +8,17 @@ QT -= gui
 
 PKGCONFIG += profile usb-moded-qt5 connman-qt5
 
-packagesExist(packagekitqt5) {
+CONFIG(DEVELOPER_MODE_ENABLED) {
     PKGCONFIG += packagekitqt5
     DEFINES += DEVELOPER_MODE_ENABLED
 }
 
-packagesExist(sailfishusermanager) {
+CONFIG(SFOS_USER_MODE) {
     PKGCONFIG += sailfishusermanager sailfishaccesscontrol
     DEFINES += USER_MODE_ENABLED
 }
 
-packagesExist(libsailfishkeyprovider) {
+CONFIG(SAILFISHKEYPROVIDER_ENABLED) {
     PKGCONFIG += libsailfishkeyprovider
     DEFINES += SAILFISHKEYPROVIDER_ENABLED
 }
