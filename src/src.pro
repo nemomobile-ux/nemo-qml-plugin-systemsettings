@@ -30,6 +30,8 @@ CONFIG(SAILFISHKEYPROVIDER_ENABLED) {
     message("Sailfish key provider enabled")
     PKGCONFIG += libsailfishkeyprovider
     DEFINES += SAILFISHKEYPROVIDER_ENABLED
+} else {
+    warning("Sailfish key provider disabled")
 }
 
 CONFIG(USE_SSU) {
