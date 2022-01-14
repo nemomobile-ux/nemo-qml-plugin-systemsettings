@@ -35,13 +35,18 @@
 
 #include <QFileSystemWatcher>
 #include <QScopedPointer>
-#include <QDBusInterface>
 #include <QVariant>
 #include <QString>
 #include <QStringList>
 #include <QHash>
 
+#include <nemo-dbus/interface.h>
+
+#ifdef SAILFISHKEYPROVIDER_ENABLED
 #include <sailfishkeyprovider_processmutex.h>
+#else
+#include <QMutex>
+#endif
 
 #include <glib.h>
 
@@ -77,7 +82,7 @@ public:
     LocationSettings::DataSources m_allowedDataSources;
     NetworkManager *m_connMan;
     NetworkTechnology *m_gpsTech;
-    QDBusInterface *m_gpsTechInterface;
+    NemoDBus::Interface *m_gpsTechInterface;
 
 private slots:
     void readSettings();
@@ -89,7 +94,7 @@ private slots:
 class IniFile
 {
 public:
-    IniFile(const QString &fileName);
+    IniFile(const QString &fileName, const QString &compatibilityFileName = QString());
     ~IniFile();
 
     bool isValid() const;
@@ -98,8 +103,13 @@ public:
     void writeString(const QString &section, const QString &key, const QString &value);
 
 private:
+#ifdef SAILFISHKEYPROVIDER_ENABLED
     mutable QScopedPointer<Sailfish::KeyProvider::ProcessMutex> m_processMutex;
+#else
+    QMutex *m_processMutex;
+#endif
     QString m_fileName;
+    QString m_compatibilityFileName;
     GKeyFile *m_keyFile;
     GError *m_error;
     bool m_modified;

@@ -90,7 +90,8 @@ UDisks2::Monitor::Monitor(PartitionManagerPrivate *manager, QObject *parent)
     qDBusRegisterMetaType<UDisks2::InterfacePropertyMap>();
     QDBusConnection systemBus = QDBusConnection::systemBus();
 
-    connect(systemBus.interface(), &QDBusConnectionInterface::callWithCallbackFailed, this, [this](const QDBusError &error, const QDBusMessage &call) {
+    connect(systemBus.interface(), &QDBusConnectionInterface::callWithCallbackFailed,
+            this, [this](const QDBusError &error, const QDBusMessage &call) {
         qCInfo(lcMemoryCardLog) << "====================================================";
         qCInfo(lcMemoryCardLog) << "DBus call with callback failed:" << error.message();
         qCInfo(lcMemoryCardLog) << "Name:" << error.name();
@@ -424,7 +425,7 @@ void UDisks2::Monitor::updatePartitionStatus(const UDisks2::Job *job, bool succe
                 }
             } else {
                 partition->activeState = QStringLiteral("failed");
-                partition->status = operation == UDisks2::Job::Mount ? Partition::Mounted : Partition::Unmounted;
+                partition->status = operation == UDisks2::Job::Mount ? Partition::Unmounted : Partition::Mounted;
             }
 
             partition->valid = true;

@@ -44,7 +44,9 @@
 #include "alarmtonemodel.h"
 #include "displaysettings.h"
 #include "aboutsettings.h"
+#ifdef DEVELOPER_MODE_ENABLED
 #include "developermodesettings.h"
+#endif
 #include "batterystatus.h"
 #include "diskusage.h"
 #include "partitionmodel.h"
@@ -53,8 +55,10 @@
 #include "locationsettings.h"
 #include "deviceinfo.h"
 #include "nfcsettings.h"
+#ifdef USER_MODE_ENABLED
 #include "userinfo.h"
 #include "usermodel.h"
+#endif
 #include "permissionsmodel.h"
 
 class AppTranslator: public QTranslator
@@ -106,17 +110,21 @@ public:
         qmlRegisterType<AboutSettings>(uri, 1, 0, "AboutSettings");
         qmlRegisterType<PartitionModel>(uri, 1, 0, "PartitionModel");
         qRegisterMetaType<Partition>("Partition");
+#ifdef DEVELOPER_MODE_ENABLED
         qmlRegisterType<DeveloperModeSettings>(uri, 1, 0, "DeveloperModeSettings");
+        qRegisterMetaType<DeveloperModeSettings::Status>("DeveloperModeSettings::Status");
+#endif
         qmlRegisterType<CertificateModel>(uri, 1, 0, "CertificateModel");
         qmlRegisterSingletonType<SettingsVpnModel>(uri, 1, 0, "SettingsVpnModel", api_factory<SettingsVpnModel>);
-        qRegisterMetaType<DeveloperModeSettings::Status>("DeveloperModeSettings::Status");
         qmlRegisterType<BatteryStatus>(uri, 1, 0, "BatteryStatus");
         qmlRegisterType<DiskUsage>(uri, 1, 0, "DiskUsage");
         qmlRegisterType<LocationSettings>(uri, 1, 0, "LocationSettings");
         qmlRegisterType<DeviceInfo>(uri, 1, 0, "DeviceInfo");
         qmlRegisterType<NfcSettings>(uri, 1, 0, "NfcSettings");
+#ifdef USER_MODE_ENABLED
         qmlRegisterType<UserInfo>(uri, 1, 0, "UserInfo");
         qmlRegisterType<UserModel>(uri, 1, 0, "UserModel");
+#endif
         qmlRegisterType<PermissionsModel>(uri, 1, 0, "PermissionsModel");
     }
 };

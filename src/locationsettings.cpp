@@ -37,9 +37,11 @@
 #include <QTimer>
 #include <QDebug>
 
+#ifdef SAILFISHKEYPROVIDER_ENABLED
 #include <sailfishkeyprovider.h>
 #include <sailfishkeyprovider_iniparser.h>
 #include <sailfishkeyprovider_processmutex.h>
+#endif
 
 #include <networkmanager.h>
 #include <networktechnology.h>
@@ -52,8 +54,9 @@ namespace {
     const QString LocationSettingsDeprecatedHereAgreementAcceptedKey = QStringLiteral("agreement_accepted");
 
     const QString PoweredPropertyName = QStringLiteral("Powered");
-    const QString LocationSettingsDir = QStringLiteral("/etc/location/");
-    const QString LocationSettingsFile = QStringLiteral("/etc/location/location.conf");
+    const QString LocationSettingsDir = QStringLiteral("/var/lib/location/");
+    const QString LocationSettingsFile = QStringLiteral("/var/lib/location/location.conf");
+    const QString CompatibilitySettingsFile = QStringLiteral("/etc/location/location.conf");
     const QString LocationSettingsSection = QStringLiteral("location");
     const QString LocationSettingsEnabledKey = QStringLiteral("enabled");
     const QString LocationSettingsCustomModeKey = QStringLiteral("custom_mode");
@@ -82,15 +85,20 @@ namespace {
     const QString MlsName = QStringLiteral("mls");
 }
 
-IniFile::IniFile(const QString &fileName)
+IniFile::IniFile(const QString &fileName, const QString &compatibilityFileName)
     : m_fileName(fileName)
+    , m_compatibilityFileName(compatibilityFileName)
     , m_keyFile(Q_NULLPTR)
     , m_error(Q_NULLPTR)
     , m_modified(false)
     , m_valid(false)
 {
+#ifdef SAILFISHKEYPROVIDER_ENABLED
     m_processMutex.reset(new Sailfish::KeyProvider::ProcessMutex(qPrintable(m_fileName)));
+#else
+    m_processMutex = new QMutex();
     m_processMutex->lock();
+#endif
     m_keyFile = g_key_file_new();
     if (!m_keyFile) {
         qWarning() << "Unable to allocate key file:" << m_fileName;
@@ -122,10 +130,23 @@ IniFile::~IniFile()
             g_error_free(m_error);
             m_error = Q_NULLPTR;
         }
+
+        if (!m_compatibilityFileName.isEmpty()) {
+            g_key_file_save_to_file(m_keyFile,
+                                    qPrintable(m_compatibilityFileName),
+                                    &m_error);
+            if (m_error) {
+                qWarning() << "Unable to save changes to compatibility key file:" << m_compatibilityFileName << ":"
+                       << m_error->code << QString::fromUtf8(m_error->message);
+                g_error_free(m_error);
+                m_error = Q_NULLPTR;
+            }
+        }
     }
     if (m_keyFile) {
         g_key_file_free(m_keyFile);
     }
+
     m_processMutex->unlock();
 }
 
@@ -187,10 +208,11 @@ LocationSettingsPrivate::LocationSettingsPrivate(LocationSettings::Mode mode, Lo
     , m_gpsTech(Q_NULLPTR)
     , m_gpsTechInterface(mode == LocationSettings::AsynchronousMode
                          ? Q_NULLPTR
-                         : new QDBusInterface("net.connman",
-                                              "/net/connman/technology/gps",
-                                              "net.connman.Technology",
-                                              QDBusConnection::systemBus()))
+                         : new NemoDBus::Interface(
+                                this, QDBusConnection::systemBus(),
+                                "net.connman",
+                                "/net/connman/technology/gps",
+                                "net.connman.Technology"))
 {
     loadProviders();
 
@@ -478,7 +500,7 @@ bool LocationSettings::gpsFlightMode() const
 {
     Q_D(const LocationSettings);
     if (d->m_gpsTechInterface) {
-        QDBusReply<QVariantMap> reply = d->m_gpsTechInterface->call("GetProperties");
+        QDBusReply<QVariantMap> reply = d->m_gpsTechInterface->blockingCall("GetProperties");
         if (reply.error().isValid()) {
             qWarning() << reply.error().message();
         } else {
@@ -498,7 +520,7 @@ void LocationSettings::setGpsFlightMode(bool flightMode)
 {
     Q_D(LocationSettings);
     if (d->m_gpsTechInterface) {
-        QDBusReply<void> reply = d->m_gpsTechInterface->call("SetProperty",
+        QDBusReply<void> reply = d->m_gpsTechInterface->blockingCall("SetProperty",
                                                              PoweredPropertyName,
                                                              QVariant::fromValue<QDBusVariant>(QDBusVariant(QVariant::fromValue<bool>(!flightMode))));
         if (reply.error().isValid()) {
@@ -771,7 +793,7 @@ void LocationSettingsPrivate::writeSettings()
 
     // write the values to the conf file
     {
-        IniFile ini(LocationSettingsFile);
+        IniFile ini(LocationSettingsFile, CompatibilitySettingsFile);
 
         ini.writeBool(LocationSettingsSection, LocationSettingsEnabledKey, m_locationEnabled);
         ini.writeBool(LocationSettingsSection, LocationSettingsCustomModeKey, m_locationMode == LocationSettings::CustomMode);

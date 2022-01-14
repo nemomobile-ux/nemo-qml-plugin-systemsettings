@@ -41,8 +41,8 @@
 #include "systemsettingsglobal.h"
 #include "userinfo.h"
 
-class QDBusInterface;
-class QDBusPendingCallWatcher;
+#include <nemo-dbus/interface.h>
+
 class QDBusServiceWatcher;
 struct SailfishUserManagerEntry;
 
@@ -144,14 +144,6 @@ private slots:
     void onCurrentUserChangeFailed(uint uid);
     void onGuestUserEnabled(bool enabled);
 
-    void userAddFinished(QDBusPendingCallWatcher *call);
-    void userModifyFinished(QDBusPendingCallWatcher *call, uint uid);
-    void userRemoveFinished(QDBusPendingCallWatcher *call, uint uid);
-    void setCurrentUserFinished(QDBusPendingCallWatcher *call, uint uid);
-    void addToGroupsFinished(QDBusPendingCallWatcher *call, uint uid);
-    void removeFromGroupsFinished(QDBusPendingCallWatcher *call, uint uid);
-    void enableGuestUserFinished(QDBusPendingCallWatcher *call, bool enabling);
-
     void createInterface();
     void destroyInterface();
 
@@ -161,7 +153,7 @@ private:
     QVector<UserInfo> m_users;
     QHash<uint, int> m_uidsToRows;
     QSet<uint> m_transitioning;
-    QDBusInterface *m_dBusInterface;
+    NemoDBus::Interface *m_dBusInterface;
     QDBusServiceWatcher *m_dBusWatcher;
     bool m_guestEnabled;
 };
