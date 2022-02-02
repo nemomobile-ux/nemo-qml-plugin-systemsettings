@@ -6,9 +6,9 @@ QT += qml dbus systeminfo xmlpatterns
 QT -= gui
 
 CONFIG += c++11 hide_symbols link_pkgconfig
-PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto connman-qt5 glib-2.0
-PKGCONFIG += nemodbus libsystemd
 
+PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto connman-qt5 glib-2.0
+PKGCONFIG += nemodbus libsystemd qofono-qt5
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
     message("Developer mode plugin enabled")
