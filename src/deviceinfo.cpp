@@ -91,13 +91,16 @@ DeviceInfoPrivate::DeviceInfoPrivate()
 
     ssusysinfo_delete(si);
 #else
-    if(QFile::exists("/etc/hw-release")) {
+    if(QFile::exists("/etc/device.ini")) {
         QSettings* devSettings = new QSettings("/etc/device.ini", QSettings::IniFormat);
         m_model = devSettings->value("MODEL", "Unknown model").toString();
         m_baseModel = devSettings->value("BASE_MODEL", "Unknown base model").toString();
         m_designation = devSettings->value("DESIGNATION", "Unknown designation").toString();
         m_manufacturer = devSettings->value("MANUFACTURER", "Unknown anufacturer").toString();
         m_prettyName = devSettings->value("PRETTY_NAME", "Unknown pretty name").toString();
+        m_osName = devSettings->value("OS_NAME", "Unknown OS name").toString();
+        m_osVersion = devSettings->value("OS_VERSION", "Unknown OS version").toString();
+        m_adaptationVersion = devSettings->value("ADAPTATION_VERSION", "Unknown adaptation version").toString();
     } else {
         qWarning() << "SSU and /etc/hw-release file not found";
         m_model = "Unknown";
@@ -105,6 +108,9 @@ DeviceInfoPrivate::DeviceInfoPrivate()
         m_designation = "Unknown";
         m_manufacturer = "Unknown";
         m_prettyName = "Unknown";
+        m_osName = "Unknow";
+        m_osVersion = "Unknow";
+        m_adaptationVersion = "Unknow";
     }
 #endif
 }
