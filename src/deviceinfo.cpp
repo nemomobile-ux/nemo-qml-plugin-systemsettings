@@ -108,9 +108,9 @@ DeviceInfoPrivate::DeviceInfoPrivate()
         m_designation = "Unknown";
         m_manufacturer = "Unknown";
         m_prettyName = "Unknown";
-        m_osName = "Unknow";
-        m_osVersion = "Unknow";
-        m_adaptationVersion = "Unknow";
+        m_osName = "Unknown";
+        m_osVersion = "Unknown";
+        m_adaptationVersion = "Unknown";
     }
 #endif
 }
