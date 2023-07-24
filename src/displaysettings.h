@@ -32,6 +32,7 @@
 #ifndef DISPLAYSETTINGS_H
 #define DISPLAYSETTINGS_H
 
+#include <QtGlobal>
 #include <QObject>
 #include <QtQml>
 #include <QDBusPendingCallWatcher>

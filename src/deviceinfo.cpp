@@ -230,8 +230,13 @@ void DeviceInfoPrivate::modemAdded(const QString &modemName)
 
 void DeviceInfoPrivate::modemsChanged(const QStringList &modems)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QSet<QString> previous(m_modemList.toSet());
     QSet<QString> current(modems.toSet());
+#else
+    QSet<QString> previous(m_modemList.begin(), m_modemList.end());
+    QSet<QString> current(modems.begin(), modems.end());
+#endif
     QSet<QString> added(current - previous);
     QSet<QString> removed(previous - current);
     for (auto iter = removed.cbegin(); iter != removed.cend(); ++iter)

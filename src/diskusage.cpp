@@ -117,10 +117,20 @@ QVariantMap DiskUsageWorker::calculate(QStringList paths)
     //  2. output(/home/<user>/)     = size(/home/<user>/)     - size(/home/<user>/foo/)
     //  3. output(/)               = size(/)               - size(/home/<user>/)
     QStringList keys;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     foreach (const QString &key, usage.uniqueKeys()) {
-        keys << expandedPaths.value(key, key);
+#else
+    foreach (const QString &key, usage.keys()) {
+#endif
+        if(!keys.contains(key)) {
+            keys << expandedPaths.value(key, key);
+        }
     }
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     qStableSort(keys.begin(), keys.end(), qGreater<QString>());
+#else
+    std::stable_sort(keys.begin(), keys.end(), std::greater<QString>());
+#endif
     for (int i=0; i<keys.length(); i++) {
         for (int j=i+1; j<keys.length(); j++) {
             QString subpath = keys[i];
@@ -214,7 +224,12 @@ void DiskUsage::calculate(const QStringList &paths, QJSValue callback)
 void DiskUsage::finished(QVariantMap usage, QJSValue *callback)
 {
     if (callback) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         callback->call(QJSValueList() << callback->engine()->toScriptValue(usage));
+#else
+        QJSEngine* engine = qjsEngine(this);
+        callback->call(QJSValueList() << engine->toScriptValue(usage));
+#endif
         delete callback;
     }
 

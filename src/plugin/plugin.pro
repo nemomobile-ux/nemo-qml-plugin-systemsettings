@@ -6,7 +6,7 @@ CONFIG += qt plugin c++11 hide_symbols link_pkgconfig
 QT += qml dbus network
 QT -= gui
 
-PKGCONFIG += profile usb-moded-qt5 connman-qt5
+PKGCONFIG += profile usb-moded-qt$${QT_MAJOR_VERSION} connman-qt$${QT_MAJOR_VERSION}
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
     PKGCONFIG += packagekitqt5

@@ -5,6 +5,8 @@
 #include <nemo-dbus/dbus.h>
 #include <nemo-dbus/interface.h>
 
+#include <QSequentialIterable>
+
 UDisks2::Block::Block(const QString &path, const UDisks2::InterfacePropertyMap &interfacePropertyMap, QObject *parent)
     : QObject(parent)
     , m_path(path)
@@ -319,7 +321,11 @@ QStringList UDisks2::Block::symlinks() const
             if (a.canConvert<QVariantList>()) {
                 QSequentialIterable i = a.value<QSequentialIterable>();
                 for (const QVariant &variantByte : i) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                     symlinkBytes.append(variantByte.toChar());
+#else
+                    symlinkBytes.append(variantByte.toChar().toLatin1());
+#endif
                 }
             }
 

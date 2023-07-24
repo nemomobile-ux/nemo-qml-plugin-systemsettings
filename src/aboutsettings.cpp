@@ -43,6 +43,7 @@
 #include <QVariant>
 #include <QSettings>
 #include <QTimer>
+#include <QLocale>
 
 namespace
 {
@@ -62,7 +63,11 @@ void parseReleaseFile(const QString &filename, QMap<QString, QString> *result)
 
         // "All strings should be in UTF-8 format, and non-printable characters
         // should not be used."
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         in.setCodec("UTF-8");
+#else
+        in.setEncoding(QStringConverter::Utf8);
+#endif
 
         while (!in.atEnd()) {
             QString line = in.readLine();
@@ -86,7 +91,11 @@ void parseReleaseFile(const QString &filename, QMap<QString, QString> *result)
             //
             // see http://stackoverflow.com/a/2821183
             // and http://stackoverflow.com/a/2821201
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             if (!QRegExp("[a-zA-Z_]+[a-zA-Z0-9_]*").exactMatch(key)) {
+#else
+            if (!QRegularExpression("[a-zA-Z_]+[a-zA-Z0-9_]*").match(key).hasMatch()) {
+#endif
                 qWarning("Invalid key in input line: '%s'", qPrintable(line));
                 continue;
             }
@@ -127,7 +136,9 @@ void parseLocalizationFile(const QString &filename, QMap<QString, QString> *resu
     }
 
     QSettings localizations(filename, QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     localizations.setIniCodec("UTF-8");
+#endif
 
     QStringList languages = QLocale::system().uiLanguages();
     QStringList availableLanguages;

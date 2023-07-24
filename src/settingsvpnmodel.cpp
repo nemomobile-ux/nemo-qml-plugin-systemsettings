@@ -36,8 +36,6 @@
 #include <QCryptographicHash>
 #include <QQmlEngine>
 #include <QDir>
-#include <QXmlQuery>
-#include <QXmlResultItems>
 #include <QSettings>
 #include "logging_p.h"
 #include "vpnmanager.h"
@@ -252,7 +250,9 @@ VpnConnection *SettingsVpnModel::get(int index) const
 {
     if (index >= 0 && index < connections().size()) {
         VpnConnection *item(connections().at(index));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+#endif
         return item;
     }
 
@@ -725,7 +725,11 @@ QVariantMap SettingsVpnModel::processOpenVpnProvisioningFile(QFile &provisioning
         } else if (!embeddedMarker.isEmpty()) {
             embeddedContent.append(line + QStringLiteral("\n"));
         } else {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QStringList tokens(line.split(whitespace, QString::SkipEmptyParts));
+#else
+            QStringList tokens(line.split(whitespace, Qt::SkipEmptyParts));
+#endif
             if (!tokens.isEmpty()) {
                 // Find directives that become part of the connman configuration
                 const QString& directive(tokens.front());
@@ -877,7 +881,11 @@ QVariantMap SettingsVpnModel::processOpenVpnProvisioningFile(QFile &provisioning
             } else {
                 QTextStream os(&outputFile);
                 foreach (const QString &line, extraOptions) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                     os << line << endl;
+#else
+                    os << line << Qt::endl;
+#endif
                 }
 
                 rv.insert(QStringLiteral("OpenVPN.ConfigFile"), outputFile.fileName());
@@ -980,7 +988,8 @@ QVariantMap SettingsVpnModel::processOpenconnectProvisioningFile(QFile &provisio
     }
 
     if (first == '<') {
-#define NS "declare default element namespace \"http://schemas.xmlsoap.org/encoding/\"; "
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    #define NS "declare default element namespace \"http://schemas.xmlsoap.org/encoding/\"; "
         QXmlQuery query;
         QXmlResultItems entries;
 
@@ -1021,6 +1030,9 @@ QVariantMap SettingsVpnModel::processOpenconnectProvisioningFile(QFile &provisio
                 rv.insert(QStringLiteral("OpenConnect.Usergroup"), userGroup[0]);
             }
         }
+#else
+        qWarning() << "XML NOT SUPPORT IN QT6. Plz fix it.";
+#endif
     } else {
         struct ArgMapping {
             bool hasArgument;
@@ -1114,6 +1126,7 @@ QVariantMap SettingsVpnModel::processOpenfortivpnProvisioningFile(QFile &provisi
     }
 
     if (first == '<') {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         QXmlQuery query;
         QXmlResultItems entries;
 
@@ -1172,7 +1185,9 @@ QVariantMap SettingsVpnModel::processOpenfortivpnProvisioningFile(QFile &provisi
         if (option[0] == QLatin1String("0")) {
             rv.insert(QStringLiteral("openfortivpn.AllowSelfSignedCert"), QStringLiteral("true"));
         }
-
+#else
+    qWarning() << "XML NOT SUPPORT IN QT6. Plz fix it.";
+#endif
     } else {
         QTextStream is(&provisioningFile);
 

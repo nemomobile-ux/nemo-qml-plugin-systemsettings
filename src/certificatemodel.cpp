@@ -318,7 +318,11 @@ private:
 
         // Join any data with the preceding header
         data.replace(QRegularExpression(": *\n +"), QStringLiteral(":"));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         foreach (const QString &line, data.split(QString("\n"), QString::SkipEmptyParts)) {
+#else
+        foreach (const QString &line, data.split(QString("\n"), Qt::SkipEmptyParts)) {
+#endif
             int index = line.indexOf(QChar(':'));
             if (index != -1) {
                 QString name(line.left(index));

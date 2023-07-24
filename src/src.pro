@@ -1,14 +1,17 @@
 TEMPLATE = lib
-TARGET = systemsettings
+ equals(QT_MAJOR_VERSION, 5):TARGET = systemsettings
+ equals(QT_MAJOR_VERSION, 6):TARGET = systemsettings-qt6
 
 CONFIG += qt create_pc create_prl no_install_prl c++11
-QT += qml dbus xmlpatterns
+QT +=  core qml dbus
 QT -= gui
+
+ equals(QT_MAJOR_VERSION, 5): QT += xmlpatterns
 
 CONFIG += c++11 hide_symbols link_pkgconfig
 
-PKGCONFIG += profile mlite5 mce timed-qt5 blkid libcrypto connman-qt5 glib-2.0
-PKGCONFIG += nemodbus libsystemd qofono-qt5
+PKGCONFIG += profile mlite$${QT_MAJOR_VERSION} mce timed-qt$${QT_MAJOR_VERSION} blkid libcrypto connman-qt$${QT_MAJOR_VERSION} glib-2.0
+PKGCONFIG += nemodbus libsystemd qofono-qt$${QT_MAJOR_VERSION}
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
     message("Developer mode plugin enabled")
@@ -124,7 +127,8 @@ CONFIG(USER_MODE_ENABLED) {
 DEFINES += \
     SYSTEMSETTINGS_BUILD_LIBRARY
 
-develheaders.path = /usr/include/systemsettings
+equals(QT_MAJOR_VERSION, 5): develheaders.path = /usr/include/systemsettings
+equals(QT_MAJOR_VERSION, 6): develheaders.path = /usr/include/systemsettings-qt6
 develheaders.files = $$PUBLIC_HEADERS
 
 target.path = $$[QT_INSTALL_LIBS]
@@ -143,7 +147,7 @@ QMAKE_PKGCONFIG_DESCRIPTION = System settings application development files
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$develheaders.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus profile connman-qt5 nemodbus
+QMAKE_PKGCONFIG_REQUIRES = Qt$${QT_MAJOR_VERSION}Core Qt$${QT_MAJOR_VERSION}DBus profile connman-qt$${QT_MAJOR_VERSION} nemodbus
 
 packagesExist(libsailfishkeyprovider) {
     QMAKE_PKGCONFIG_REQUIRES += libsailfishkeyprovider
