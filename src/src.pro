@@ -147,7 +147,8 @@ QMAKE_PKGCONFIG_DESCRIPTION = System settings application development files
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$develheaders.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-QMAKE_PKGCONFIG_REQUIRES = Qt$${QT_MAJOR_VERSION}Core Qt$${QT_MAJOR_VERSION}DBus profile connman-qt$${QT_MAJOR_VERSION} nemodbus
+equals(QT_MAJOR_VERSION, 5): QMAKE_PKGCONFIG_REQUIRES = Qt$${QT_MAJOR_VERSION}Core Qt$${QT_MAJOR_VERSION}DBus profile connman-qt$${QT_MAJOR_VERSION} nemodbus
+equals(QT_MAJOR_VERSION, 6): QMAKE_PKGCONFIG_REQUIRES = profile connman-qt$${QT_MAJOR_VERSION} nemodbus
 
 packagesExist(libsailfishkeyprovider) {
     QMAKE_PKGCONFIG_REQUIRES += libsailfishkeyprovider
