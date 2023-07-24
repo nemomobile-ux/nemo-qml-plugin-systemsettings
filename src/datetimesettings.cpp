@@ -30,9 +30,6 @@
  */
 
 #include "datetimesettings.h"
-
-#include <timed-qt5/interface>
-#include <timed-qt5/wallclock>
 #include <QDebug>
 
 
@@ -89,7 +86,7 @@ void DateTimeSettings::setTime(int hour, int minute)
     QDate currentDate = QDate::currentDate();
     QTime time(hour, minute);
     QDateTime newTime(currentDate, time);
-    setTime(newTime.toTime_t());
+    setTime(newTime.toSecsSinceEpoch());
 }
 
 
@@ -97,7 +94,7 @@ void DateTimeSettings::setDate(const QDate &date)
 {
     QDateTime newTime = QDateTime::currentDateTime();
     newTime.setDate(date);
-    setTime(newTime.toTime_t());
+    setTime(newTime.toSecsSinceEpoch());
 }
 
 bool DateTimeSettings::automaticTimeUpdate()

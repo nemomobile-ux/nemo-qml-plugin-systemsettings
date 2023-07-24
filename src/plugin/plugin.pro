@@ -41,4 +41,8 @@ SOURCES += \
     plugin.cpp
 
 INCLUDEPATH += ..
+equals(QT_MAJOR_VERSION, 6) {
+LIBS += -L.. -lsystemsettings-qt6
+} else {
 LIBS += -L.. -lsystemsettings
+}

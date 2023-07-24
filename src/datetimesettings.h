@@ -34,9 +34,13 @@
 
 #include <QObject>
 #include <QTime>
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <timed-qt5/interface>
 #include <timed-qt5/wallclock>
+#else
+#include <timed-qt6/interface>
+#include <timed-qt6/wallclock>
+#endif
 
 #include <systemsettingsglobal.h>
 

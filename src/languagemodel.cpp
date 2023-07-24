@@ -226,7 +226,9 @@ QList<Language> LanguageModel::supportedLanguages()
 
     foreach (const QFileInfo &fileInfo, fileInfoList) {
         QSettings settings(fileInfo.filePath(), QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         settings.setIniCodec("UTF-8");
+#endif
         QString name = settings.value("Name").toString();
         QString localeCode = settings.value("LocaleCode").toString();
         QString region = settings.value("Region").toString();
