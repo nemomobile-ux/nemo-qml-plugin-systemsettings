@@ -2,13 +2,13 @@ TEMPLATE = lib
  equals(QT_MAJOR_VERSION, 5):TARGET = systemsettings
  equals(QT_MAJOR_VERSION, 6):TARGET = systemsettings-qt6
 
-CONFIG += qt create_pc create_prl no_install_prl c++11
+CONFIG += qt create_pc create_prl no_install_prl
 QT +=  core qml dbus
 QT -= gui
 
  equals(QT_MAJOR_VERSION, 5): QT += xmlpatterns
 
-CONFIG += c++11 hide_symbols link_pkgconfig
+CONFIG += hide_symbols link_pkgconfig
 
 PKGCONFIG += profile mlite$${QT_MAJOR_VERSION} mce timed-qt$${QT_MAJOR_VERSION} blkid libcrypto connman-qt$${QT_MAJOR_VERSION} glib-2.0
 PKGCONFIG += nemodbus libsystemd qofono-qt$${QT_MAJOR_VERSION}
