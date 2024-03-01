@@ -34,20 +34,13 @@
 
 #include <QObject>
 #include <QTime>
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <timed-qt5/interface>
-#include <timed-qt5/wallclock>
-#else
-#include <timed-qt6/interface>
-#include <timed-qt6/wallclock>
-#endif
 
 #include <systemsettingsglobal.h>
+class DateTimeSettingsPrivate;
 
 class SYSTEMSETTINGS_EXPORT DateTimeSettings: public QObject
 {
     Q_OBJECT
-
     Q_ENUMS(HourMode)
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(bool automaticTimeUpdate READ automaticTimeUpdate WRITE setAutomaticTimeUpdate NOTIFY automaticTimeUpdateChanged)
@@ -86,23 +79,8 @@ signals:
     void automaticTimezoneUpdateChanged();
     void timezoneChanged();
 
-private slots:
-    void onTimedSignal(const Maemo::Timed::WallClock::Info &info, bool time_changed);
-    void onGetWallClockInfoFinished(QDBusPendingCallWatcher *watcher);
-    void onWallClockSettingsFinished(QDBusPendingCallWatcher *watcher);
-
 private:
-    bool setTime(time_t time);
-    bool setSettings(Maemo::Timed::WallClock::Settings &s);
-    void updateTimedInfo();
-
-private:
-    Maemo::Timed::Interface m_timed;
-    QString m_timezone;
-    bool m_autoSystemTime;
-    bool m_autoTimezone;
-    bool m_timedInfoValid;
-    Maemo::Timed::WallClock::Info m_timedInfo;
+    DateTimeSettingsPrivate *d_ptr;
 };
 
 #endif
