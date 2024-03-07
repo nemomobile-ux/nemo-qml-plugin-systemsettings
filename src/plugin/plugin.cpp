@@ -51,7 +51,6 @@
 #include "diskusage.h"
 #include "partitionmodel.h"
 #include "certificatemodel.h"
-#include "settingsvpnmodel.h"
 #include "locationsettings.h"
 #include "deviceinfo.h"
 #include "nfcsettings.h"
@@ -76,12 +75,6 @@ public:
         qApp->removeTranslator(this);
     }
 };
-
-template<class T>
-static QObject *api_factory(QQmlEngine *, QJSEngine *)
-{
-    return new T;
-}
 
 class SystemSettingsPlugin : public QQmlExtensionPlugin
 {
@@ -115,7 +108,6 @@ public:
         qRegisterMetaType<DeveloperModeSettings::Status>("DeveloperModeSettings::Status");
 #endif
         qmlRegisterType<CertificateModel>(uri, 1, 0, "CertificateModel");
-        qmlRegisterSingletonType<SettingsVpnModel>(uri, 1, 0, "SettingsVpnModel", api_factory<SettingsVpnModel>);
         qmlRegisterType<BatteryStatus>(uri, 1, 0, "BatteryStatus");
         qmlRegisterType<DiskUsage>(uri, 1, 0, "DiskUsage");
         qmlRegisterType<LocationSettings>(uri, 1, 0, "LocationSettings");

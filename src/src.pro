@@ -64,7 +64,6 @@ SOURCES += \
     partitionmodel.cpp \
     deviceinfo.cpp \
     locationsettings.cpp \
-    settingsvpnmodel.cpp \
     timezoneinfo.cpp \
     udisks2block.cpp \
     udisks2blockdevices.cpp \
@@ -81,7 +80,6 @@ PUBLIC_HEADERS = \
     displaysettings.h \
     aboutsettings.h \
     certificatemodel.h \
-    settingsvpnmodel.h \
     batterystatus.h \
     udisks2block_p.h \
     udisks2defines.h \
@@ -147,11 +145,13 @@ QMAKE_PKGCONFIG_DESCRIPTION = System settings application development files
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$develheaders.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+
 equals(QT_MAJOR_VERSION, 5): QMAKE_PKGCONFIG_REQUIRES = Qt$${QT_MAJOR_VERSION}Core Qt$${QT_MAJOR_VERSION}DBus profile connman-qt$${QT_MAJOR_VERSION} nemodbus
-equals(QT_MAJOR_VERSION, 6): QMAKE_PKGCONFIG_REQUIRES = profile connman-qt$${QT_MAJOR_VERSION} nemodbus
+equals(QT_MAJOR_VERSION, 6): QMAKE_PKGCONFIG_REQUIRES = profile nemodbus
 
 packagesExist(libsailfishkeyprovider) {
     QMAKE_PKGCONFIG_REQUIRES += libsailfishkeyprovider
 }
+
 
 INSTALLS += target develheaders pkgconfig locationconfig compat_locationconfig
