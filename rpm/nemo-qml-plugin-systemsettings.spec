@@ -16,7 +16,6 @@ Requires:       udisks2 >= 2.8.1+git6
 Requires:       mlite-qt5 >= 0.3.6
 Requires(post): coreutils
 BuildRequires:  pkgconfig(Qt5Qml)
-BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(Qt5XmlPatterns)
 BuildRequires:  pkgconfig(timed-qt5)
 BuildRequires:  pkgconfig(profile)
@@ -47,12 +46,6 @@ Requires:   %{name} = %{version}-%{release}
 Requires:   pkgconfig(nemodbus)
 
 %description devel
-%{summary}.
-
-%package tests
-Summary:    System settings C++ library (unit tests)
-
-%description tests
 %{summary}.
 
 %package ts-devel
@@ -101,11 +94,6 @@ fi
 %{_libdir}/pkgconfig/systemsettings.pc
 %{_includedir}/systemsettings/*
 %{_libdir}/libsystemsettings.so
-
-%files tests
-%defattr(-,root,root,-)
-/opt/tests/%{name}-tests/ut_diskusage
-/opt/tests/%{name}-tests/tests.xml
 
 %files ts-devel
 %{_datadir}/translations/source/*.ts

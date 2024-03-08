@@ -57,8 +57,6 @@ SOURCES += \
     aboutsettings.cpp \
     certificatemodel.cpp \
     batterystatus.cpp \
-    diskusage.cpp \
-    diskusage_impl.cpp \
     partition.cpp \
     partitionmanager.cpp \
     partitionmodel.cpp \
@@ -83,7 +81,6 @@ PUBLIC_HEADERS = \
     batterystatus.h \
     udisks2block_p.h \
     udisks2defines.h \
-    diskusage.h \
     partition.h \
     partitionmanager.h \
     partitionmodel.h \
@@ -99,7 +96,6 @@ HEADERS += \
     localeconfig.h \
     batterystatus_p.h \
     logging_p.h \
-    diskusage_p.h \
     locationsettings_p.h \
     logging_p.h \
     nfcsettings.h \
