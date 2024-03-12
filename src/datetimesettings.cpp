@@ -268,3 +268,5 @@ void DateTimeSettings::setHourMode(DateTimeSettings::HourMode mode)
     s.setFlag24(mode == TwentyFourHours);
     d_ptr->setSettings(s);
 }
+
+#include "datetimesettings.moc"
