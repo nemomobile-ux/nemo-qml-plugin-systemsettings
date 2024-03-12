@@ -6,11 +6,9 @@ CONFIG += qt create_pc create_prl no_install_prl
 QT +=  core qml dbus
 QT -= gui
 
- equals(QT_MAJOR_VERSION, 5): QT += xmlpatterns
-
 CONFIG += hide_symbols link_pkgconfig
 
-PKGCONFIG += mlite$${QT_MAJOR_VERSION} mce timed-qt$${QT_MAJOR_VERSION} blkid libcrypto connman-qt$${QT_MAJOR_VERSION} glib-2.0
+PKGCONFIG += profile mlite$${QT_MAJOR_VERSION} mce timed-qt$${QT_MAJOR_VERSION} blkid libcrypto connman-qt$${QT_MAJOR_VERSION} glib-2.0
 PKGCONFIG += libsystemd qofono-qt$${QT_MAJOR_VERSION}
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
