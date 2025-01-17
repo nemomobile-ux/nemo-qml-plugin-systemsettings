@@ -278,7 +278,7 @@ void PartitionManagerPrivate::refresh()
 
     refresh(m_partitions);
 
-    for (const auto partition : changedPartitions) {
+    for (const auto &partition : changedPartitions) {
         emit partitionChanged(Partition(partition));
     }
 }

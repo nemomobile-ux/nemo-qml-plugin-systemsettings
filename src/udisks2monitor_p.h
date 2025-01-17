@@ -115,6 +115,7 @@ private:
                             const QVariantList &arguments);
     void startMountOperation(const QString &devicePath, const QString &dbusMethod, const QString &dbusObjectPath,
                              const QVariantList &arguments);
+
     PartitionManagerPrivate::PartitionList lookupPartitions(const QStringList &objects);
 
     void createPartition(const Block *block);
