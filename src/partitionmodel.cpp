@@ -116,7 +116,7 @@ bool PartitionModel::externalStoragesPopulated() const
 
 void PartitionModel::refresh()
 {
-    m_manager->refresh();
+    m_manager->scheduleRefresh();
 }
 
 void PartitionModel::refresh(int index)
