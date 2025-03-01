@@ -40,7 +40,7 @@
 class ComNokiaMceRequestInterface;
 class ComNokiaMceSignalInterface;
 class QDBusVariant;
-class MGConfItem;
+class MDConfItem;
 
 #include <systemsettingsglobal.h>
 
@@ -171,7 +171,7 @@ private:
     void updateConfig(const QString &key, const QVariant &value);
     ComNokiaMceRequestInterface *m_mceIface;
     ComNokiaMceSignalInterface *m_mceSignalIface;
-    MGConfItem *m_orientationLock;
+    MDConfItem *m_orientationLock;
     int m_maxBrightness;
     int m_brightness;
     int m_dimTimeout;
