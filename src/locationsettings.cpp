@@ -232,7 +232,7 @@ LocationSettingsPrivate::LocationSettingsPrivate(LocationSettings::Mode mode, Lo
                                              "PropertyChanged",
                                              this, SLOT(gpsTechPropertyChanged(QString, QDBusVariant)));
     } else {
-        m_connMan = NetworkManager::sharedInstance();
+        m_connMan = QSharedPointer<NetworkManager>(NetworkManager::instance());
         connect(m_connMan.data(), &NetworkManager::technologiesChanged,
                 this, &LocationSettingsPrivate::findGpsTech);
         connect(m_connMan.data(), &NetworkManager::availabilityChanged,
