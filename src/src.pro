@@ -13,7 +13,7 @@ PKGCONFIG += libsystemd qofono-qt$${QT_MAJOR_VERSION} nemodbus
 
 CONFIG(DEVELOPER_MODE_ENABLED) {
     message("Developer mode plugin enabled")
-    PKGCONFIG += packagekitqt5
+    PKGCONFIG += packagekitqt$${QT_MAJOR_VERSION}
     DEFINES += DEVELOPER_MODE_ENABLED
 } else {
     warning("Developer mode plugin disabled")
