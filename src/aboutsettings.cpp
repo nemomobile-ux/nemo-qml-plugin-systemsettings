@@ -91,11 +91,8 @@ void parseReleaseFile(const QString &filename, QMap<QString, QString> *result)
             //
             // see http://stackoverflow.com/a/2821183
             // and http://stackoverflow.com/a/2821201
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            if (!QRegExp("[a-zA-Z_]+[a-zA-Z0-9_]*").exactMatch(key)) {
-#else
-            if (!QRegularExpression("[a-zA-Z_]+[a-zA-Z0-9_]*").match(key).hasMatch()) {
-#endif
+            QRegularExpressionMatch match = QRegularExpression("[a-zA-Z_]+[a-zA-Z0-9_]*").match(key);
+            if (match.capturedLength() != key.length()) {
                 qWarning("Invalid key in input line: '%s'", qPrintable(line));
                 continue;
             }
