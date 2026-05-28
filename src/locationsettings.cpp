@@ -38,8 +38,6 @@
 #include <QDebug>
 
 #ifdef SAILFISHKEYPROVIDER_ENABLED
-#include <sailfishkeyprovider.h>
-#include <sailfishkeyprovider_iniparser.h>
 #include <sailfishkeyprovider_processmutex.h>
 #endif
 
