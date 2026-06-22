@@ -47,47 +47,44 @@
 #include <limits>
 
 namespace {
-    const QString LocationSettingsDeprecatedCellIdPositioningEnabledKey = QStringLiteral("cell_id_positioning_enabled");
-    const QString LocationSettingsDeprecatedHereEnabledKey = QStringLiteral("here_agreement_accepted");
-    const QString LocationSettingsDeprecatedHereAgreementAcceptedKey = QStringLiteral("agreement_accepted");
+const QString PoweredPropertyName = QStringLiteral("Powered");
+const QString LocationSettingsDir = QStringLiteral("/var/lib/location/");
+const QString LocationSettingsFile = QStringLiteral("/var/lib/location/location.conf");
+const QString CompatibilitySettingsFile = QStringLiteral("/etc/location/location.conf");
+const QString LocationSettingsSection = QStringLiteral("location");
+const QString LocationSettingsEnabledKey = QStringLiteral("enabled");
+const QString LocationSettingsCustomModeKey = QStringLiteral("custom_mode");
+const QString LocationSettingsGpsEnabledKey = QStringLiteral("gps\\enabled");
 
-    const QString PoweredPropertyName = QStringLiteral("Powered");
-    const QString LocationSettingsDir = QStringLiteral("/var/lib/location/");
-    const QString LocationSettingsFile = QStringLiteral("/var/lib/location/location.conf");
-    const QString CompatibilitySettingsFile = QStringLiteral("/etc/location/location.conf");
-    const QString LocationSettingsSection = QStringLiteral("location");
-    const QString LocationSettingsEnabledKey = QStringLiteral("enabled");
-    const QString LocationSettingsCustomModeKey = QStringLiteral("custom_mode");
-    const QString LocationSettingsGpsEnabledKey = QStringLiteral("gps\\enabled");
+const QString ProviderOfflineEnabledPattern = QStringLiteral("%1\\enabled");
+const QString ProviderAgreementAcceptedPattern = QStringLiteral("%1\\agreement_accepted");
+const QString ProviderOnlineEnabledPattern = QStringLiteral("%1\\online_enabled");
 
-    const QString ProviderOfflineEnabledPattern = QStringLiteral("%1\\enabled");
-    const QString ProviderAgreementAcceptedPattern = QStringLiteral("%1\\agreement_accepted");
-    const QString ProviderOnlineEnabledPattern = QStringLiteral("%1\\online_enabled");
+const QMap<LocationSettings::DataSource, QString> AllowedDataSourcesKeys {
+    { LocationSettings::OnlineDataSources, QStringLiteral("allowed_data_sources\\online") },
+    { LocationSettings::DeviceSensorsData, QStringLiteral("allowed_data_sources\\device_sensors") },
+    { LocationSettings::BluetoothData, QStringLiteral("allowed_data_sources\\bt_addr") },
+    { LocationSettings::WlanData, QStringLiteral("allowed_data_sources\\wlan_data") },
+    { LocationSettings::CellTowerData, QStringLiteral("allowed_data_sources\\cell_data") },
+    { LocationSettings::GpsData, QStringLiteral("allowed_data_sources\\gps") },
+    { LocationSettings::GlonassData, QStringLiteral("allowed_data_sources\\glonass") },
+    { LocationSettings::BeidouData, QStringLiteral("allowed_data_sources\\beidou") },
+    { LocationSettings::GalileoData, QStringLiteral("allowed_data_sources\\galileo") },
+    { LocationSettings::QzssData, QStringLiteral("allowed_data_sources\\qzss") },
+    { LocationSettings::SbasData, QStringLiteral("allowed_data_sources\\sbas") }
+};
 
-    const QMap<LocationSettings::DataSource, QString> AllowedDataSourcesKeys {
-        { LocationSettings::OnlineDataSources, QStringLiteral("allowed_data_sources\\online") },
-        { LocationSettings::DeviceSensorsData, QStringLiteral("allowed_data_sources\\device_sensors") },
-        { LocationSettings::BluetoothData, QStringLiteral("allowed_data_sources\\bt_addr") },
-        { LocationSettings::WlanData, QStringLiteral("allowed_data_sources\\wlan_data") },
-        { LocationSettings::CellTowerData, QStringLiteral("allowed_data_sources\\cell_data") },
-        { LocationSettings::GpsData, QStringLiteral("allowed_data_sources\\gps") },
-        { LocationSettings::GlonassData, QStringLiteral("allowed_data_sources\\glonass") },
-        { LocationSettings::BeidouData, QStringLiteral("allowed_data_sources\\beidou") },
-        { LocationSettings::GalileoData, QStringLiteral("allowed_data_sources\\galileo") },
-        { LocationSettings::QzssData, QStringLiteral("allowed_data_sources\\qzss") },
-        { LocationSettings::SbasData, QStringLiteral("allowed_data_sources\\sbas") }
-    };
-
-    const QString YandexName = QStringLiteral("yandex");
-    const QString HereName = QStringLiteral("here");
-    const QString MlsName = QStringLiteral("mls");
+const QString YandexName = QStringLiteral("yandex");
+const QString HereName = QStringLiteral("here");
+const QString MlsName = QStringLiteral("mls");
+const QString HybrisName = QStringLiteral("hybris");
 }
 
 IniFile::IniFile(const QString &fileName, const QString &compatibilityFileName)
     : m_fileName(fileName)
     , m_compatibilityFileName(compatibilityFileName)
-    , m_keyFile(Q_NULLPTR)
-    , m_error(Q_NULLPTR)
+    , m_keyFile(nullptr)
+    , m_error(nullptr)
     , m_modified(false)
     , m_valid(false)
 {
@@ -97,6 +94,7 @@ IniFile::IniFile(const QString &fileName, const QString &compatibilityFileName)
     m_processMutex = new QMutex();
     m_processMutex->lock();
 #endif
+    m_processMutex->lock();
     m_keyFile = g_key_file_new();
     if (!m_keyFile) {
         qWarning() << "Unable to allocate key file:" << m_fileName;
@@ -109,7 +107,7 @@ IniFile::IniFile(const QString &fileName, const QString &compatibilityFileName)
             qWarning() << "Unable to load key file:" << m_fileName << ":"
                        << m_error->code << QString::fromUtf8(m_error->message);
             g_error_free(m_error);
-            m_error = Q_NULLPTR;
+            m_error = nullptr;
         } else {
             m_valid = true;
         }
@@ -126,7 +124,7 @@ IniFile::~IniFile()
             qWarning() << "Unable to save changes to key file:" << m_fileName << ":"
                        << m_error->code << QString::fromUtf8(m_error->message);
             g_error_free(m_error);
-            m_error = Q_NULLPTR;
+            m_error = nullptr;
         }
 
         if (!m_compatibilityFileName.isEmpty()) {
@@ -135,16 +133,15 @@ IniFile::~IniFile()
                                     &m_error);
             if (m_error) {
                 qWarning() << "Unable to save changes to compatibility key file:" << m_compatibilityFileName << ":"
-                       << m_error->code << QString::fromUtf8(m_error->message);
+                           << m_error->code << QString::fromUtf8(m_error->message);
                 g_error_free(m_error);
-                m_error = Q_NULLPTR;
+                m_error = nullptr;
             }
         }
     }
     if (m_keyFile) {
         g_key_file_free(m_keyFile);
     }
-
     m_processMutex->unlock();
 }
 
@@ -168,7 +165,7 @@ bool IniFile::readBool(const QString &section, const QString &key, bool *value, 
                        << m_error->code << QString::fromUtf8(m_error->message);
         }
         g_error_free(m_error);
-        m_error = Q_NULLPTR;
+        m_error = nullptr;
         *value = defaultValue;
         return false;
     }
@@ -202,14 +199,14 @@ LocationSettingsPrivate::LocationSettingsPrivate(LocationSettings::Mode mode, Lo
     , m_locationMode(LocationSettings::CustomMode)
     , m_settingMultipleSettings(false)
     , m_allowedDataSources(static_cast<LocationSettings::DataSources>(std::numeric_limits<quint32>::max()))
-    , m_gpsTech(Q_NULLPTR)
+    , m_gpsTech(nullptr)
     , m_gpsTechInterface(mode == LocationSettings::AsynchronousMode
-                         ? Q_NULLPTR
-                         : new NemoDBus::Interface(
-                                this, QDBusConnection::systemBus(),
-                                "net.connman",
-                                "/net/connman/technology/gps",
-                                "net.connman.Technology"))
+                             ? nullptr
+                             : new NemoDBus::Interface(
+                                   this, QDBusConnection::systemBus(),
+                                   "net.connman",
+                                   "/net/connman/technology/gps",
+                                   "net.connman.Technology"))
 {
     loadProviders();
 
@@ -230,7 +227,7 @@ LocationSettingsPrivate::LocationSettingsPrivate(LocationSettings::Mode mode, Lo
                                              "PropertyChanged",
                                              this, SLOT(gpsTechPropertyChanged(QString, QDBusVariant)));
     } else {
-        m_connMan = QSharedPointer<NetworkManager>(NetworkManager::instance());
+        m_connMan = NetworkManager::sharedInstance();
         connect(m_connMan.data(), &NetworkManager::technologiesChanged,
                 this, &LocationSettingsPrivate::findGpsTech);
         connect(m_connMan.data(), &NetworkManager::availabilityChanged,
@@ -243,24 +240,34 @@ LocationSettingsPrivate::~LocationSettingsPrivate()
 {
     if (m_gpsTech) {
         disconnect(m_gpsTech, 0, q, 0);
-        m_gpsTech = 0;
+        m_gpsTech = nullptr;
     }
 
     delete m_gpsTechInterface;
-    m_gpsTechInterface = 0;
+    m_gpsTechInterface = nullptr;
 }
 
 void LocationSettingsPrivate::loadProviders()
 {
+    // Note: on a sandbox the detected providers list may not be right
+    // TODO: could be better if we provided some config file with each provider
+    // rather than hard-coding here the details and detecting availability.
+
     // for now just hard-coding the known potential providers.
     // can be replaced with config type of thing if there's need to support more and more providers.
     if (QFile::exists(QStringLiteral("/usr/libexec/geoclue-here"))) {
+        m_detectedProviders.append(HereName);
+    }
+    {
         LocationProvider provider;
         provider.hasAgreement = true;
         m_providers[HereName] = provider;
     }
 
     if (QFile::exists(QStringLiteral("/usr/libexec/geoclue-mlsdb"))) {
+        m_detectedProviders.append(MlsName);
+    }
+    {
         LocationProvider provider;
         provider.hasAgreement = true;
         provider.offlineCapable = true;
@@ -268,9 +275,22 @@ void LocationSettingsPrivate::loadProviders()
     }
 
     if (QFile::exists(QStringLiteral("/usr/libexec/geoclue-yandex"))) {
+        m_detectedProviders.append(YandexName);
+    }
+    {
         LocationProvider provider;
         provider.hasAgreement = true; // supposedly
         m_providers[YandexName] = provider;
+    }
+
+    if (QFile::exists(QStringLiteral("/usr/libexec/geoclue-hybris"))) {
+        m_detectedProviders.append(HybrisName);
+    }
+    {
+        LocationProvider provider;
+        provider.offlineCapable = true; // used to separate the basic and extra network requests modes
+        provider.hasAgreement = false;
+        m_providers[HybrisName] = provider;
     }
 }
 
@@ -309,8 +329,11 @@ bool LocationSettingsPrivate::updateProvider(const QString &name, const Location
             }
         } else if (provider.hasAgreement) {
             if (!provider.agreementAccepted && !m_pendingAgreements.contains(name)) {
-                m_pendingAgreements.append(name);
-                emit q->pendingAgreementsChanged();
+                // include only installed providers as possible pending agreement
+                if (m_detectedProviders.contains(name)) {
+                    m_pendingAgreements.append(name);
+                    emit q->pendingAgreementsChanged();
+                }
             } else if (provider.agreementAccepted && m_pendingAgreements.contains(name)) {
                 m_pendingAgreements.removeOne(name);
                 emit q->pendingAgreementsChanged();
@@ -318,9 +341,14 @@ bool LocationSettingsPrivate::updateProvider(const QString &name, const Location
         }
     }
 
-    if (offlineEnabledChanged && name == MlsName) {
-        emit q->mlsEnabledChanged();
+    if (offlineEnabledChanged) {
+        if (name == MlsName) {
+            emit q->mlsEnabledChanged();
+        } else if (name == HybrisName) {
+            emit q->hybrisEnabledChanged();
+        }
     }
+
     if (agreementChanged || onlineEnabledChanged) {
         if (name == HereName) {
             emit q->hereStateChanged();
@@ -328,6 +356,8 @@ bool LocationSettingsPrivate::updateProvider(const QString &name, const Location
             emit q->mlsOnlineStateChanged();
         } else if (name == YandexName) {
             emit q->yandexOnlineStateChanged();
+        } else if (name == HybrisName) {
+            emit q->hybrisOnlineStateChanged();
         }
     }
 
@@ -347,7 +377,7 @@ LocationSettings::OnlineAGpsState LocationSettingsPrivate::onlineState(const QSt
         if (!provider.onlineCapable) {
             resultValid = false;
             result = LocationSettings::OnlineAGpsAgreementNotAccepted;
-        } else if (!provider.agreementAccepted) {
+        } else if (provider.hasAgreement && !provider.agreementAccepted) {
             result = LocationSettings::OnlineAGpsAgreementNotAccepted;
         } else {
             result = provider.onlineEnabled ? LocationSettings::OnlineAGpsEnabled
@@ -510,7 +540,7 @@ bool LocationSettings::gpsFlightMode() const
         }
         return false;
     }
-    return d->m_gpsTech == Q_NULLPTR ? false : !(d->m_gpsTech->powered());
+    return d->m_gpsTech == nullptr ? false : !(d->m_gpsTech->powered());
 }
 
 void LocationSettings::setGpsFlightMode(bool flightMode)
@@ -518,8 +548,8 @@ void LocationSettings::setGpsFlightMode(bool flightMode)
     Q_D(LocationSettings);
     if (d->m_gpsTechInterface) {
         QDBusReply<void> reply = d->m_gpsTechInterface->blockingCall("SetProperty",
-                                                             PoweredPropertyName,
-                                                             QVariant::fromValue<QDBusVariant>(QDBusVariant(QVariant::fromValue<bool>(!flightMode))));
+                                                                     PoweredPropertyName,
+                                                                     QVariant::fromValue<QDBusVariant>(QDBusVariant(QVariant::fromValue<bool>(!flightMode))));
         if (reply.error().isValid()) {
             qWarning() << reply.error().message();
         }
@@ -530,13 +560,15 @@ void LocationSettings::setGpsFlightMode(bool flightMode)
 
 bool LocationSettings::gpsAvailable() const
 {
-    return QFile::exists(QStringLiteral("/usr/libexec/geoclue-hybris"));
+    return QFile::exists(QStringLiteral("/usr/libexec/geoclue-hybris"))
+    || QFile::exists(QStringLiteral("/usr/libexec/geoclue-gpsd"))
+        || QFile::exists(QStringLiteral("/usr/libexec/geoclue-gpsd3"));
 }
 
 QStringList LocationSettings::locationProviders() const
 {
     Q_D(const LocationSettings);
-    return d->m_providers.keys();
+    return d->m_detectedProviders;
 }
 
 LocationProvider LocationSettings::providerInfo(const QString &name) const
@@ -565,7 +597,7 @@ bool LocationSettings::mlsEnabled() const
 
 void LocationSettings::setMlsEnabled(bool enabled)
 {
-    if (mlsAvailable() && enabled != mlsEnabled()) {
+    if (enabled != mlsEnabled()) {
         LocationProvider provider = providerInfo(MlsName);
         provider.offlineEnabled = enabled;
         updateLocationProvider(MlsName, provider);
@@ -587,7 +619,7 @@ void LocationSettings::setMlsOnlineState(LocationSettings::OnlineAGpsState state
 bool LocationSettings::mlsAvailable() const
 {
     Q_D(const LocationSettings);
-    return d->m_providers.contains(MlsName);
+    return d->m_detectedProviders.contains(MlsName);
 }
 
 /*Yandex  services*/
@@ -606,7 +638,7 @@ void LocationSettings::setYandexOnlineState(LocationSettings::OnlineAGpsState st
 bool LocationSettings::yandexAvailable() const
 {
     Q_D(const LocationSettings);
-    return d->m_providers.contains(YandexName);
+    return d->m_detectedProviders.contains(YandexName);
 }
 
 /*HERE*/
@@ -625,7 +657,41 @@ void LocationSettings::setHereState(LocationSettings::OnlineAGpsState state)
 bool LocationSettings::hereAvailable() const
 {
     Q_D(const LocationSettings);
-    return d->m_providers.contains(HereName);
+    return d->m_detectedProviders.contains(HereName);
+}
+
+// Hybris
+bool LocationSettings::hybrisAvailable() const
+{
+    Q_D(const LocationSettings);
+    return d->m_detectedProviders.contains(HybrisName);
+}
+
+bool LocationSettings::hybrisEnabled() const
+{
+    Q_D(const LocationSettings);
+    return d->m_providers.value(HybrisName).offlineEnabled;
+}
+
+void LocationSettings::setHybrisEnabled(bool enabled)
+{
+    if (enabled != hybrisEnabled()) {
+        LocationProvider provider = providerInfo(HybrisName);
+        provider.offlineEnabled = enabled;
+        updateLocationProvider(HybrisName, provider);
+    }
+}
+
+LocationSettings::OnlineAGpsState LocationSettings::hybrisOnlineState() const
+{
+    Q_D(const LocationSettings);
+    return d->onlineState(HybrisName);
+}
+
+void LocationSettings::setHybrisOnlineState(LocationSettings::OnlineAGpsState state)
+{
+    Q_D(LocationSettings);
+    d->updateOnlineAgpsState(HybrisName, state);
 }
 
 LocationSettings::LocationMode LocationSettings::locationMode() const
@@ -706,39 +772,40 @@ void LocationSettingsPrivate::readSettings()
             return;
         }
 
-        // read the deprecated keys first for backward compatibility
-        bool oldMlsEnabled = false;
-        bool oldHereEnabled = false;
-        bool oldHereAgreementAccepted = false;
-        ini.readBool(LocationSettingsSection, LocationSettingsDeprecatedCellIdPositioningEnabledKey, &oldMlsEnabled);
-        ini.readBool(LocationSettingsSection, LocationSettingsDeprecatedHereEnabledKey, &oldHereEnabled);
-        ini.readBool(LocationSettingsSection, LocationSettingsDeprecatedHereAgreementAcceptedKey, &oldHereAgreementAccepted);
-
         // then read the current keys
         ini.readBool(LocationSettingsSection, LocationSettingsEnabledKey, &locationEnabled);
         ini.readBool(LocationSettingsSection, LocationSettingsCustomModeKey, &customMode);
         ini.readBool(LocationSettingsSection, LocationSettingsGpsEnabledKey, &gpsEnabled);
 
         for (const QString &name : m_providers.keys()) {
-            LocationProvider provider;
-            if (name == MlsName) {
-                provider.offlineEnabled = oldMlsEnabled;
-            } else if (name == HereName) {
-                provider.onlineEnabled = oldHereEnabled;
-                provider.agreementAccepted = oldHereAgreementAccepted;
+            if (name == HybrisName) {
+                continue; // read this separately last to get proper defaults
             }
+            LocationProvider provider;
             ini.readBool(LocationSettingsSection, ProviderOfflineEnabledPattern.arg(name), &provider.offlineEnabled);
             ini.readBool(LocationSettingsSection, ProviderOnlineEnabledPattern.arg(name), &provider.onlineEnabled);
             ini.readBool(LocationSettingsSection, ProviderAgreementAcceptedPattern.arg(name), &provider.agreementAccepted);
             updateProvider(name, provider);
         }
 
+        {
+            // falling back to mls state if no explicit config
+            LocationProvider provider;
+            ini.readBool(LocationSettingsSection, ProviderOfflineEnabledPattern.arg(HybrisName),
+                         &provider.offlineEnabled,
+                         m_providers.value(MlsName).offlineEnabled);
+            ini.readBool(LocationSettingsSection, ProviderOnlineEnabledPattern.arg(HybrisName),
+                         &provider.onlineEnabled,
+                         m_providers.value(MlsName).onlineEnabled);
+            updateProvider(HybrisName, provider);
+        }
+
         // read the MDM allowed allowed data source keys
         bool dataSourceAllowed = true;
         for (QMap<LocationSettings::DataSource, QString>::const_iterator
-                it = AllowedDataSourcesKeys.constBegin();
-                it != AllowedDataSourcesKeys.constEnd();
-                it++) {
+                 it = AllowedDataSourcesKeys.constBegin();
+             it != AllowedDataSourcesKeys.constEnd();
+             it++) {
             ini.readBool(LocationSettingsSection, it.value(), &dataSourceAllowed, true);
             if (!dataSourceAllowed) {
                 allowedDataSources &= ~it.key();
@@ -811,9 +878,9 @@ void LocationSettingsPrivate::writeSettings()
 
         // write the MDM allowed allowed data source keys
         for (QMap<LocationSettings::DataSource, QString>::const_iterator
-                it = AllowedDataSourcesKeys.constBegin();
-                it != AllowedDataSourcesKeys.constEnd();
-                it++) {
+                 it = AllowedDataSourcesKeys.constBegin();
+             it != AllowedDataSourcesKeys.constEnd();
+             it++) {
             ini.writeBool(LocationSettingsSection, it.value(), m_allowedDataSources & it.key());
         }
     }
